@@ -18,9 +18,9 @@ function App() {
       <Header/>
     <Routes>
     <Route path="/" element={<UserPrivateRoute/>}>
-    <Route path='home' element={<Home />} />
+    <Route path='/home' element={<Home />} />
     <Route path="/pdflecture/:pdfIVid" element={<PDFSpecificLecture />} />
-    <Route path='about' element={<About />} />
+    <Route path='/about' element={<About />} />
 
     </Route>
 
@@ -33,11 +33,7 @@ function App() {
       <Route path='/login' element={<Login />} />
 
 
-      {/* <Route path='/contact' element={<Contact />} />
 
-      <Route path='/policy' element={<Policy />} />
-
-      <Route path='*' element={<PageNotFound />} /> */}
     </Routes>
   </Router>
   )

@@ -48,10 +48,7 @@ const Header = memo(() => {
 
             <NavLink to="/about" className="nav-link">About</NavLink>
             </li>
-            {/* <li className="nav-item">
-            <NavLink to={`/pdflecture/${lecture.pdfIVid}`} className="nav-link">PDF Show</NavLink>
-            </li> */}
-
+   
 
             {!auth?.user ? (
               <>

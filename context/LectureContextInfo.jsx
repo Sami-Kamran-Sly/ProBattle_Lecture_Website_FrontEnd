@@ -18,15 +18,41 @@ function LectureContextInfo({ children }) {
   });
 
   useEffect(() => {
-    const storedLecture = localStorage.getItem("lectureData");
+    const storedLecture = localStorage.getItem("LecturesData");
     if (storedLecture) {
-      setLecture(JSON.parse(storedLecture));
+      const parseData = JSON.parse(storedLecture)
+
+      setLecture({
+        pdfIVid: parseData.pdfIVid,
+        user: parseData.user,
+        status: parseData.status,
+        institute: parseData.institute,
+        topic: parseData.topic,
+        level: parseData.level,
+        pdfUrl: parseData.pdfUrl,
+        imageUrl: parseData.imageUrl,
+        videoUrl: parseData.videoUrl,
+        
+      })
     }
+
+
+
+
+    // const data = localStorage.getItem("auth");
+
+    // if (data) {
+    //   const parseData = JSON.parse(data);
+
+    //   SetAuth({
+    //     ...auth,
+    //     user: parseData.user,
+    //     token: parseData.token,
+    //   });
+    // }
+
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("lectureData", JSON.stringify(lecture));
-  }, [lecture]);
 
   return (
     <LectureContext.Provider value={{ lecture, setLecture }}>

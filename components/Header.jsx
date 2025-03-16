@@ -1,9 +1,11 @@
 import React, { memo } from 'react';
 import { Link, NavLink } from "react-router-dom";
 import { useAuthContext } from '../context/AuthContextInfo';
+import { useLectureContext } from '../context/LectureContextInfo';
 
 const Header = memo(() => {
   const { auth, SetAuth } = useAuthContext();
+  const { lecture} = useLectureContext();
 
   const handleLogOut = () => {
     SetAuth({ ...auth, user: null, token: "" });
@@ -38,7 +40,19 @@ const Header = memo(() => {
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
               <NavLink to="/home" className="nav-link">Home</NavLink>
+   
+
             </li>
+
+            <li className="nav-item">
+
+            <NavLink to="/about" className="nav-link">About</NavLink>
+            </li>
+            {/* <li className="nav-item">
+            <NavLink to={`/pdflecture/${lecture.pdfIVid}`} className="nav-link">PDF Show</NavLink>
+            </li> */}
+
+
             {!auth?.user ? (
               <>
                 <li className="nav-item">

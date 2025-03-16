@@ -1,28 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContextInfo";
+import { useLectureContext } from "../context/LectureContextInfo";
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const PDFSpecificLecture = () => {
-
-
-  const { id } = useParams();
+const navigate = useNavigate()
+const { lecture,setLecture} = useLectureContext()
+  const { pdfIVid } = useParams();
   const { auth } = useAuthContext();
-  const [lecture, setLecture] = useState(null);
+  // const [lecture, setLecture] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const getLecture = async () => {
-      if (!id) return;
+      if (!pdfIVid) return;
 
       setLoading(true);
       setError("");
 
       try {
         const response = await fetch(
-          `${API_BASE_URL}/api/v1/lecture/getLecture/${id}`,
+          `${API_BASE_URL}/api/v1/lecture/getLecture/${pdfIVid}`,
           {
             method: "GET",
             headers: {
@@ -35,7 +36,12 @@ const PDFSpecificLecture = () => {
         if (!response.ok) throw new Error("Failed to fetch lecture details");
 
         const data = await response.json();
-        setLecture(data);
+        localStorage.setItem("LecturesData", JSON.stringify(data));
+        setLecture((prevLecture) => ({
+          ...prevLecture,
+          ...data,
+        }));
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -44,9 +50,30 @@ const PDFSpecificLecture = () => {
     };
 
     getLecture();
-  }, [id, auth?.token]);
+  }, [pdfIVid, auth?.token]);
 
 
+  const deleteLecture = async () => {
+    if (!window.confirm("Are you sure you want to delete this lecture?")) return;
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/lecture/delete/${pdfIVid}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: auth?.token,
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to delete lecture");
+
+      // alert("Lecture deleted successfully!");
+      setLecture(null);
+      navigate("/home"); // Redirect after deletion
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
   // Function to download PDF
   const downloadPDF = () => {
@@ -60,6 +87,9 @@ const PDFSpecificLecture = () => {
       document.body.removeChild(link);
     }
   };
+
+
+
 
   if (loading) {
     return (
@@ -103,6 +133,9 @@ const PDFSpecificLecture = () => {
             </button>
           </div>
         )}
+
+
+
       </div>
     </div>
 
@@ -136,13 +169,65 @@ const PDFSpecificLecture = () => {
         </div>
       )}
     </div>
+
+
+    <div className="d-flex   justify-content-center align-items-center gap-3">
+
+<div>
+  
+    {/* Delete Lecture Button */}
+    {auth?.token && (
+      <div className="mt-3">
+            <button className="btn btn-danger" onClick={deleteLecture}>
+              Delete Lecture
+            </button>
+          </div>
+        )}
+
+        </div>
+
+        <div>
+  
+  {auth?.token && (
+    <div className="mt-3">
+          <button className="btn btn-danger" 
+          // onClick={deleteLecture}
+          >
+            Update Lecture
+          </button>
+        </div>
+      )}
+
+      </div>
+
+</div>
   </div>
+
+
+
 </div>
 
   );
 };
 
 export default PDFSpecificLecture;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // import React, { useEffect, useState } from "react";
 // import { useParams } from "react-router-dom";

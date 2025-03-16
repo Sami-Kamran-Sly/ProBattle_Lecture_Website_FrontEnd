@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '../components/Header'
 import UserPrivateRoute from '../Routes/UserPrivateRoute'
 import PDFSpecificLecture from '../Lectures/PDFSpecificLecture';
+import About from './pages/About';
 
 function App() {
 
@@ -18,7 +19,8 @@ function App() {
     <Routes>
     <Route path="/" element={<UserPrivateRoute/>}>
     <Route path='home' element={<Home />} />
-    <Route path="/pdflecture/:id" element={<PDFSpecificLecture />} />
+    <Route path="/pdflecture/:pdfIVid" element={<PDFSpecificLecture />} />
+    <Route path='about' element={<About />} />
 
     </Route>
 

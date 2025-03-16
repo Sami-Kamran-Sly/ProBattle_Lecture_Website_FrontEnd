@@ -3,14 +3,14 @@ import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import axios from "axios";
 import { useAuthContext } from "../context/AuthContextInfo";
-
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 function UserPrivateRoute() {
   const [ok, setOk] = useState(false);
   const { auth } = useAuthContext();
 
   const authCheck = async () => {
     try {
-        const res = await axios.get("http://localhost:5000/api/v1/auth/user-auth", {
+        const res = await axios.get(`${API_BASE_URL}/api/v1/auth/user-auth`, {
             // headers: { Authorization: auth?.token }, 
           });
       setOk(res.data.ok);

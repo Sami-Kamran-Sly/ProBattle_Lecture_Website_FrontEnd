@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContextInfo";
 import { useLectureContext } from "../context/LectureContextInfo";
 
@@ -8,7 +8,7 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const PDFSpecificLecture = () => {
 
 const { lecture,setLecture} = useLectureContext()
-
+const { id } = useParams();
   const { auth } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -21,7 +21,7 @@ const { lecture,setLecture} = useLectureContext()
       setError("");
 
       try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/lecture/getLecture/${lecture._id}`,
+        const response = await fetch(`${API_BASE_URL}/api/v1/lecture/getLecture/${id}`,
           {
             method: "GET",
             headers: {
@@ -34,7 +34,7 @@ const { lecture,setLecture} = useLectureContext()
         if (!response.ok) throw new Error("Failed to fetch lecture details");
 
         const data = await response.json();
-        setLecture(data.lecture);
+        setLecture(data);
 
       } catch (err) {
         setError(err.message);

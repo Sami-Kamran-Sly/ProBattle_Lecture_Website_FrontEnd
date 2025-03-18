@@ -21,8 +21,7 @@ const { lecture,setLecture} = useLectureContext()
       setError("");
 
       try {
-        const response = await fetch(
-          `${API_BASE_URL}/api/v1/lecture/getLecture/${lecture._id}`,
+        const response = await fetch(`${API_BASE_URL}/api/v1/lecture/getLecture/${lecture._id}`,
           {
             method: "GET",
             headers: {

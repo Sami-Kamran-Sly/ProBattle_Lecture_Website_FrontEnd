@@ -35,11 +35,7 @@ const { lecture,setLecture} = useLectureContext()
         if (!response.ok) throw new Error("Failed to fetch lecture details");
 
         const data = await response.json();
-        localStorage.setItem("LecturesData", JSON.stringify(data));
-        setLecture((prevLecture) => ({
-          ...prevLecture,
-          ...data,
-        }));
+        setLecture(data.lecture);
 
       } catch (err) {
         setError(err.message);

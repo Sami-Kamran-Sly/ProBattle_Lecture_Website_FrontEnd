@@ -10,6 +10,7 @@ import Header from '../components/Header'
 import UserPrivateRoute from '../Routes/UserPrivateRoute'
 import PDFSpecificLecture from '../Lectures/PDFSpecificLecture';
 import About from './pages/About';
+import AllLectures from '../Lectures/AllLectures';
 
 function App() {
 
@@ -17,9 +18,10 @@ function App() {
     <Router>
       <Header/>
     <Routes>
-    <Route path="/" element={<UserPrivateRoute/>}>
+  <Route path="/" element={<UserPrivateRoute/>}>
     <Route path='/home' element={<Home />} />
-    <Route path="/pdflecture/:pdfIVid" element={<PDFSpecificLecture />} />
+    <Route path='/getAllLecture' element={<AllLectures/>} />
+    <Route path="/pdflecture/:id" element={<PDFSpecificLecture />} />
     <Route path='/about' element={<About />} />
 
     </Route>

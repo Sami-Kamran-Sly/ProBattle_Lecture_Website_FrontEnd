@@ -1,29 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContextInfo";
 import { useLectureContext } from "../context/LectureContextInfo";
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const PDFSpecificLecture = () => {
-const navigate = useNavigate()
+
 const { lecture,setLecture} = useLectureContext()
-  const { pdfIVid } = useParams();
+
   const { auth } = useAuthContext();
-  // const [lecture, setLecture] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const getLecture = async () => {
-      if (!pdfIVid) return;
+
 
       setLoading(true);
       setError("");
 
       try {
         const response = await fetch(
-          `${API_BASE_URL}/api/v1/lecture/getLecture/${pdfIVid}`,
+          `${API_BASE_URL}/api/v1/lecture/getLecture/${lecture._id}`,
           {
             method: "GET",
             headers: {
@@ -50,30 +49,30 @@ const { lecture,setLecture} = useLectureContext()
     };
 
     getLecture();
-  }, [pdfIVid, auth?.token]);
+  }, [auth?.token]);
 
 
-  const deleteLecture = async () => {
-    if (!window.confirm("Are you sure you want to delete this lecture?")) return;
+  // const deleteLecture = async () => {
+  //   if (!window.confirm("Are you sure you want to delete this lecture?")) return;
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/v1/lecture/delete/${pdfIVid}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: auth?.token,
-        },
-      });
+  //   try {
+  //     const response = await fetch(`${API_BASE_URL}/api/v1/lecture/delete/${lecture._id}`, {
+  //       method: "DELETE",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: auth?.token,
+  //       },
+  //     });
 
-      if (!response.ok) throw new Error("Failed to delete lecture");
+  //     if (!response.ok) throw new Error("Failed to delete lecture");
 
-      // alert("Lecture deleted successfully!");
-      setLecture(null);
-      navigate("/home"); // Redirect after deletion
-    } catch (error) {
-      alert(error.message);
-    }
-  };
+  //     // alert("Lecture deleted successfully!");
+  //     setLecture(null);
+  //     navigate("/home"); // Redirect after deletion
+  //   } catch (error) {
+  //     alert(error.message);
+  //   }
+  // };
 
   // Function to download PDF
   const downloadPDF = () => {
@@ -93,7 +92,9 @@ const { lecture,setLecture} = useLectureContext()
 
   if (loading) {
     return (
-      <div className="container text-center mt-4">
+      <div className="container text-center mt-5"
+
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -111,7 +112,7 @@ const { lecture,setLecture} = useLectureContext()
 
   return (
  <div className="container d-flex   justify-content-center align-items-center vh-100"
- style={{marginTop:"60px"}}
+ style={{marginTop:"100px"}}
  >
   <div className="card shadow-lg  p-4 w-100" style={{ maxWidth: "900px" }}>
     <h2 className="text-center mb-4 text-primary fw-bold">Lecture Details</h2>
@@ -120,7 +121,7 @@ const { lecture,setLecture} = useLectureContext()
     <div className="row">
       <div className="col-md-6">
         <h4 className="mb-2 fw-bold"><strong>Topic:</strong> {lecture.topic}</h4>
-        <p><strong>Professional Name: </strong> {lecture.user}</p>
+       
         <p><strong>Level:</strong> {lecture.level}</p>
         <p><strong>Institute:</strong> {lecture.institute}</p>
 
@@ -133,6 +134,29 @@ const { lecture,setLecture} = useLectureContext()
             </button>
           </div>
         )}
+
+{lecture.mulPdfUrls && lecture.mulPdfUrls.length > 0 && (
+  <div className="mt-3">
+    <h5 className="text-success fw-bold">Multiple Lecture PDFs</h5>
+    {lecture.mulPdfUrls.map((mpdf, index) => (
+      <div key={index} className="mt-2">
+        <button
+          className="btn btn-success"
+          onClick={() => {
+            const link = document.createElement("a");
+            link.href = mpdf;
+            link.download = `Lecture_${index + 1}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }}
+        >
+          Download PDF {index + 1}
+        </button>
+      </div>
+    ))}
+  </div>
+)}
 
 
 
@@ -173,18 +197,6 @@ const { lecture,setLecture} = useLectureContext()
 
     <div className="d-flex   justify-content-center align-items-center gap-3">
 
-<div>
-  
-    {/* Delete Lecture Button */}
-    {auth?.token && (
-      <div className="mt-3">
-            <button className="btn btn-danger" onClick={deleteLecture}>
-              Delete Lecture
-            </button>
-          </div>
-        )}
-
-        </div>
 
         <div>
   

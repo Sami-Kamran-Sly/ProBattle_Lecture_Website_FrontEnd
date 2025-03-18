@@ -14,7 +14,9 @@
 }
 
 
-
+.userProfileColor{
+  background: linear-gradient(135deg, #1a1a40, #3a2d80, #443f8a);
+}
 
 .navbar {
   background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); 

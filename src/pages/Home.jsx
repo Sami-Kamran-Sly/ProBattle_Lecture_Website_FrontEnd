@@ -5,51 +5,58 @@ import { useLectureContext } from "../../context/LectureContextInfo";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const HomePage = () => {
-  const [pdfUrl, setPdfUrl] = useState([]);
+  const [pdfUrl, setPdfUrl] = useState("")
+  const [mulPdfUrls, setmulPdfUrls] = useState([])
+  const [lectureId, setLectureId] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [status, setStatus] = useState("");
   const [institute, setInstitute] = useState("");
   const [topic, setTopic] = useState("");
   const [level, setLevel] = useState("");
-  const [user, setUser] = useState("");
-  const [pdfIVid, setpdfIVid] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [lectureCreated, setLectureCreated] = useState(false);
+  const navigate = useNavigate();
 const {auth} = useAuthContext()
 const {  setLecture} = useLectureContext()
   
 
 
 
-// const handlePDFUpload = async (files) => {
-//   try {
-//     setLoading(true);
-//     setError("");
-    
-//     const formData = new FormData();
-//     for (let file of files) {
-//       formData.append("pdf", file); // Append multiple files
-//     }
+const handleMultiplePDFUpload = async (files) => {
+  try {
+    setLoading(true);
+    setError("");
 
-//     const response = await fetch(`${API_BASE_URL}/api/v1/lecture/uploadPDF`, {
-//       method: "POST",
-//       headers: { Authorization: auth?.token }, // No `Content-Type`, FormData sets it automatically
-//       body: formData,
-//     });
+    const formData = new FormData();
+    for (let file of files) {
+      formData.append("mulpdf", file); // Ensure backend expects "mulpdf"
+    }
 
-//     const data = await response.json();
-//     if (!response.ok) throw new Error(data.error || "Failed to upload PDFs");
+    const response = await fetch(`${API_BASE_URL}/api/v1/lecture/uploadMulPDF`, {
+      method: "POST",
+      headers: { Authorization: auth?.token }, // Do NOT set Content-Type
+      body: formData,
+    });
 
-//     setPdfUrl(data.pdfUrl); // Set multiple URLs instead of one
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Failed to upload PDFs");
 
-//   } catch (err) {
-//     setError(err.message);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
+    if (Array.isArray(data.mulPdfUrls)) {
+      setmulPdfUrls((prevUrls) => [...prevUrls, ...data.mulPdfUrls]); // Ensure proper state update
+    } else {
+      throw new Error("Invalid response format from server");
+    }
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
 
   const handlePDFUpload = async (file) => {
@@ -140,15 +147,15 @@ const {  setLecture} = useLectureContext()
       setLoading(true);
       setError("");
 
-      if (!status || !institute || !topic || !level || !user || !pdfIVid) {
+      if (!status || !institute || !topic || !level || !pdfUrl  ) {
         setError("All fields are required.");
         setLoading(false);
         return;
       }
 
       const lectureData = {
-        pdfIVid,
-        user,
+
+        mulPdfUrls,
         status,
         institute,
         topic,
@@ -170,12 +177,14 @@ const {  setLecture} = useLectureContext()
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Failed to create lecture");
 
-      localStorage.setItem("LecturesData", JSON.stringify(data));
-      setLecture((prevLecture) => ({
-          ...prevLecture,
-          ...data, 
-        }));
+      localStorage.setItem("LecturesData", JSON.stringify(data.lecture));
+      setLecture(data.lecture);
         console.log("Lecture Created:", data);
+        console.log("Lecture ID Created:", data.lecture._id)
+        ;
+        navigate(`/pdflecture/${data.lecture._id}`);
+        setLectureId(data.lecture._id);
+        
         setLectureCreated(true)
     } catch (err) {
       setError(err.message);
@@ -188,8 +197,8 @@ const {  setLecture} = useLectureContext()
 
 
   return (
-    <div className="container mt-4 d-flex justify-content-center align-items-center min-vh-100">
-    <div className="card shadow-lg p-4 border-0">
+    <div className="container mt-3 d-flex justify-content-center align-items-center min-vh-100">
+    <div className="card mt-5 md:mt-1 shadow-lg p-4 border-0">
       <h2 className="text-center mb-4">Upload Your Lecture</h2>
       <div className="row g-3">
 
@@ -203,16 +212,16 @@ const {  setLecture} = useLectureContext()
             onChange={(e) => handlePDFUpload(e.target.files[0])}
           />
         </div>
-{/* <div className="col-md-6">
-  <label className="form-label">Upload PDF</label>
+<div className="col-md-6">
+  <label className="form-label">Upload PDF (Multiple Files)</label>
   <input
     type="file"
     accept="application/pdf"
     className="form-control"
     multiple // Allows multiple file selection
-    onChange={(e) => handlePDFUpload(e.target.files)}
+    onChange={(e) => handleMultiplePDFUpload(e.target.files)}
   />
-</div> */}
+</div>
 
 
         <div className="col-md-6">
@@ -274,26 +283,8 @@ const {  setLecture} = useLectureContext()
           />
         </div>
 
-        <div className="col-md-6">
-  <label className="form-label">PDF Password</label>
-  <input
-    type="password"
-    className="form-control"
-    placeholder="Enter PDF Password"
-    value={pdfIVid}
-    onChange={(e) => setpdfIVid(e.target.value)}
-  />
-</div>
-<div className="col-md-6">
-  <label className="form-label">Username</label>
-  <input
-    type="text"
-    className="form-control"
-    placeholder="Enter Username"
-    value={user}
-    onChange={(e) => setUser(e.target.value)}
-  />
-</div>
+
+
 
       </div>
       <div className="text-center mt-4 d-flex justify-content-center align-items-center gap-3">
@@ -301,11 +292,11 @@ const {  setLecture} = useLectureContext()
     {loading ? "Uploading..." : "Create Lecture"}
   </button>
 
-  {lectureCreated && (
-    <Link to={`/pdflecture/${pdfIVid}`}>
+  {/* {lectureCreated && (
+  <Link to=>
       <button className="btn btn-success">View Your Lecture</button>
     </Link>
-  )}
+  )} */}
 </div>
 
       

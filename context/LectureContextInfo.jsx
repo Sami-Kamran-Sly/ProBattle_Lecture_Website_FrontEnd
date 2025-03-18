@@ -6,53 +6,34 @@ export const useLectureContext = () => useContext(LectureContext);
 
 function LectureContextInfo({ children }) {
   const [lecture, setLecture] = useState({
-    id: "",
-    user: "",
+    _id: null, // Correct ID field
     status: "",
     institute: "",
     topic: "",
     level: "",
     pdfUrl: "",
+    mulPdfUrls: [],
     imageUrl: "",
     videoUrl: "",
   });
-
   useEffect(() => {
     const storedLecture = localStorage.getItem("LecturesData");
     if (storedLecture) {
-      const parseData = JSON.parse(storedLecture)
-
+      const parseData = JSON.parse(storedLecture);
+  
       setLecture({
-        pdfIVid: parseData.pdfIVid,
-        user: parseData.user,
+        _id: parseData._id, // Ensure 'lecture' is part of stored structure
         status: parseData.status,
         institute: parseData.institute,
         topic: parseData.topic,
         level: parseData.level,
         pdfUrl: parseData.pdfUrl,
+        mulPdfUrls: parseData.mulPdfUrls,
         imageUrl: parseData.imageUrl,
         videoUrl: parseData.videoUrl,
-        
-      })
+      });
     }
-
-
-
-
-    // const data = localStorage.getItem("auth");
-
-    // if (data) {
-    //   const parseData = JSON.parse(data);
-
-    //   SetAuth({
-    //     ...auth,
-    //     user: parseData.user,
-    //     token: parseData.token,
-    //   });
-    // }
-
-  }, []);
-
+  }, []);// Empty dependency array to run only once on mount
 
   return (
     <LectureContext.Provider value={{ lecture, setLecture }}>

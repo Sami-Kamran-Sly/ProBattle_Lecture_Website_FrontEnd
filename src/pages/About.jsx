@@ -1,9 +1,9 @@
 import React from "react";
-import { useLectureContext } from "../../context/LectureContextInfo";
 import { useAuthContext } from "../../context/AuthContextInfo";
+import { useLectureContext } from "../../context/LectureContextInfo";
 
 function About() {
-  const { lecture } = useLectureContext();
+  const { lectures } = useLectureContext();
   const { auth } = useAuthContext();
 
   return (
@@ -41,31 +41,25 @@ function About() {
           <div className="mb-3 d-flex align-items-center">
             <i className="bi bi-clipboard-check text-success fs-5 me-2"></i>
             <strong className="text-secondary">Status:</strong>
-            <span className="ms-2 text-dark">{lecture?.status || "N/A"}</span>
-          </div>
-
-          <div className="mb-3 d-flex align-items-center">
-            <i className="bi bi-file-earmark-text text-warning fs-5 me-2"></i>
-            <strong className="text-secondary">PDF ID:</strong>
-            <span className="ms-2 text-dark">{lecture?.pdfIVid || "N/A"}</span>
+            <span className="ms-2 text-dark">{lectures?.status || "N/A"}</span>
           </div>
 
           <div className="mb-3 d-flex align-items-center">
             <i className="bi bi-buildings text-info fs-5 me-2"></i>
             <strong className="text-secondary">Institute:</strong>
-            <span className="ms-2 text-dark">{lecture?.institute || "N/A"}</span>
+            <span className="ms-2 text-dark">{lectures?.institute || "N/A"}</span>
           </div>
 
           <div className="mb-3 d-flex align-items-center">
             <i className="bi bi-journal-text text-danger fs-5 me-2"></i>
             <strong className="text-secondary">Topic:</strong>
-            <span className="ms-2 text-dark">{lecture?.topic || "N/A"}</span>
+            <span className="ms-2 text-dark">{lectures?.topic || "N/A"}</span>
           </div>
 
           <div className="mb-3 d-flex align-items-center">
             <i className="bi bi-bar-chart-line text-primary fs-5 me-2"></i>
             <strong className="text-secondary">Level:</strong>
-            <span className="ms-2 text-dark">{lecture?.level || "N/A"}</span>
+            <span className="ms-2 text-dark">{lectures?.level || "N/A"}</span>
           </div>
         </div>
       </div>

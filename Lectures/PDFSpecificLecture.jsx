@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContextInfo";
-import { useLectureContext } from "../context/LectureContextInfo";
+// import { useLectureContext } from "../context/LectureContextInfo";
 
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const PDFSpecificLecture = () => {
 
-const { lecture,setLecture} = useLectureContext()
+// const { lecture,setLecture} = useLectureContext()
+const [ lecture,setLecture] = useState(null)
 const { id } = useParams();
+console.log(id)
   const { auth } = useAuthContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -34,7 +36,8 @@ const { id } = useParams();
         if (!response.ok) throw new Error("Failed to fetch lecture details");
 
         const data = await response.json();
-        setLecture(data);
+        console.log(data.lecture)
+        setLecture(data.lecture);
 
       } catch (err) {
         setError(err.message);
@@ -43,8 +46,13 @@ const { id } = useParams();
       }
     };
 
-    getLecture();
-  }, [auth?.token]);
+    if (id) getLecture();
+  }, [id,auth?.token]);
+
+
+
+
+
 
 
   // const deleteLecture = async () => {
@@ -87,7 +95,7 @@ const { id } = useParams();
 
   if (loading) {
     return (
-      <div className="container text-center mt-5"
+      <div className="container text-center "
 
       >
         <div className="spinner-border text-primary" role="status">
@@ -107,7 +115,7 @@ const { id } = useParams();
 
   return (
  <div className="container d-flex   justify-content-center align-items-center vh-100"
- style={{marginTop:"100px"}}
+ style={{marginTop:"5rem"}}
  >
   <div className="card shadow-lg  p-4 w-100" style={{ maxWidth: "900px" }}>
     <h2 className="text-center mb-4 text-primary fw-bold">Lecture Details</h2>
@@ -195,8 +203,10 @@ const { id } = useParams();
 
         <div>
   
+          <Link to={`/edit/${lecture._id}`}>
   {auth?.token && (
     <div className="mt-3">
+
           <button className="btn btn-danger" 
           // onClick={deleteLecture}
           >
@@ -205,6 +215,7 @@ const { id } = useParams();
         </div>
       )}
 
+      </Link>
       </div>
 
 </div>

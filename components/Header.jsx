@@ -1,19 +1,64 @@
-import React, { memo } from 'react';
-import { Link, NavLink } from "react-router-dom";
+import React, { memo, useEffect, useState } from 'react';
+import { Link, NavLink, useParams } from "react-router-dom";
 import { useAuthContext } from '../context/AuthContextInfo';
-import { useLectureContext } from '../context/LectureContextInfo';
+// import { useLectureContext } from '../context/LectureContextInfo';
 
 const Header = memo(() => {
   const { auth, SetAuth } = useAuthContext();
+  // const { lectures,setLectures} = useLectureContext();
 
-  const { lecture} = useLectureContext();
-
+  const [ lecture,setLecture] = useState(null)
+const { id } = useParams();
+console.log(id)
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const handleLogOut = () => {
     SetAuth({ ...auth, user: null, token: "" });
+
     localStorage.removeItem("auth");
     toast.success("Logout Successfully");
   };
 
+
+
+
+
+  useEffect(() => {
+    const getLecture = async () => {
+
+
+      setLoading(true);
+      setError("");
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/v1/lecture/getLecture/${id}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: auth?.token,
+            },
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch lecture details");
+
+        const data = await response.json();
+        console.log(data.lecture)
+        setLecture(data.lecture);
+
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) getLecture();
+  }, [id,auth?.token]);
+
+
+  
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary fixed-top">
     <div className="container-fluid">
@@ -32,7 +77,7 @@ const Header = memo(() => {
   
       <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
         {/* Brand */}
-        <Link to="/home" className="navbar-brand">PDF Upload</Link>
+        <Link to="/" className="navbar-brand">PDF Upload</Link>
   
         {/* Search Bar (LEFT for Small Screens, CENTERED for Mid & Large Screens) */}
         <div className="d-md-none w-100">
@@ -54,7 +99,7 @@ const Header = memo(() => {
         style={{paddingRight:"3rem"}}
         >
   <li className="nav-item">
-    <NavLink to="/home" className="nav-link ">Home</NavLink>
+    <NavLink to="/" className="nav-link ">Home</NavLink>
   </li>
   <li className="nav-item">
     <NavLink to="/about" className="nav-link">About</NavLink>
@@ -81,11 +126,18 @@ const Header = memo(() => {
       
 
       >
-        <li       >
-          <NavLink to={`/pdflecture/${lecture._id}`} className="dropdown-item">
-            View Lecture
-          </NavLink>
-        </li>
+{/*        
+       {!lecture?._id ? (
+  <li className="dropdown-item text-muted">No Lecture Yet</li>
+) : (
+  <li>
+    <NavLink to={`/pdflecture/${lecture._id}`} className="dropdown-item">
+      View Lecture
+    </NavLink>
+  </li>
+)} */}
+
+        
         <li       >
           <NavLink onClick={handleLogOut} to="/login" className="dropdown-item">
             Logout

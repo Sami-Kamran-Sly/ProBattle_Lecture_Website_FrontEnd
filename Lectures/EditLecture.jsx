@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../context/AuthContextInfo";
+import { useLectureContext } from "../context/LectureContextInfo";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -17,7 +18,8 @@ function EditLecture() {
     const [topic, setTopic] = useState("");
     const [level, setLevel] = useState("");
 
-  const [lecture, setLecture] = useState(null);
+  // const [lecture, setLecture] = useState(null);
+  const  { lectures,setLectures} = useLectureContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -165,12 +167,12 @@ function EditLecture() {
     setLevel(lecture.level);
     setInstitute(lecture.institute);
     setStatus(lecture.status);
-    setPdfUrl(lecture.pdfUrl);
+    setPdfUrl(lecture.pdfUrl); 
     setImageUrl(lecture.imageUrl);
     setVideoUrl(lecture.videoUrl);
     setmulPdfUrls(lecture.mulPdfUrls);
 
-        setLecture(data.lecture);
+        setLectures(data.lecture);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -247,7 +249,7 @@ function EditLecture() {
 
       localStorage.setItem("LecturesData", JSON.stringify(data.lecture));
 
-      setLecture(data.lecture);
+      setLectures(data.lecture);
 
 
 
@@ -259,6 +261,7 @@ function EditLecture() {
         console.log("Lecture Created:", data._id);
         console.log("Lecture Created:", data);
         console.log("Lecture ID Created:", data.lecture._id)
+        navigate("/getAllLecture"); // Navigate back to the lecture list
 
     } catch (err) {
       setError(err.message);
@@ -294,6 +297,15 @@ function EditLecture() {
                 className="form-control"
                 onChange={(e) => handlePDFUpload(e.target.files[0])}
               />
+              {pdfUrl && (
+  <div className="mt-2">
+    <p className="mb-1 fw-semibold">Previous PDF:</p>
+    <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm">
+      View PDF
+    </a>
+  </div>
+)}
+
             </div>
             <div className="col-md-6">
               <label className="form-label">Upload PDF (Multiple Files)</label>
@@ -304,6 +316,19 @@ function EditLecture() {
                 multiple
                 onChange={(e) => handleMultiplePDFUpload(e.target.files)}
               />
+              {mulPdfUrls.length > 0 && (
+  <div className="mt-2">
+    <p className="mb-1 fw-semibold">Previous Multiple PDFs:</p>
+    {mulPdfUrls.map((url, index) => (
+      <div key={index}>
+        <a href={url} target="_blank" rel="noopener noreferrer" className="btn btn-outline-secondary btn-sm me-2 mb-2">
+          PDF {index + 1}
+        </a>
+      </div>
+    ))}
+  </div>
+)}
+
             </div>
             <div className="col-md-6">
               <label className="form-label">Upload Image (Optional Not Recommended)</label>
@@ -313,6 +338,13 @@ function EditLecture() {
                 className="form-control"
                 onChange={(e) => handleImageUpload(e.target.files[0])}
               />
+              {imageUrl && (
+  <div className="mt-2">
+    <p className="mb-1 fw-semibold">Previous Image:</p>
+    <img src={imageUrl} alt="Previous" className="img-fluid rounded shadow-sm" style={{ maxHeight: "200px" }} />
+  </div>
+)}
+
             </div>
             <div className="col-md-6">
               <label className="form-label">Upload Video (Optional Not Recommended)</label>
@@ -322,6 +354,13 @@ function EditLecture() {
                 className="form-control"
                 onChange={(e) => handleVideoUpload(e.target.files[0])}
               />
+              {videoUrl && (
+  <div className="mt-2">
+    <p className="mb-1 fw-semibold">Previous Video:</p>
+    <video src={videoUrl} controls className="img-fluid rounded shadow-sm" style={{ maxHeight: "200px" }} />
+  </div>
+)}
+
             </div>
             <div className="col-md-6">
               <label className="form-label">Status</label>

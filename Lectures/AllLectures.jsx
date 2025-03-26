@@ -50,7 +50,7 @@ function AllLectures() {
                         src={lecture.imageUrl}
                         alt="Lecture"
                         className="img-fluid rounded shadow-sm"
-                        style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                        style={{ width: "100%", height: "auto", objectFit: "cover" }}
                       />
                     )}
                     {lecture.videoUrl && (
